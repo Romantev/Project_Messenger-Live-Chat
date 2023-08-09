@@ -1,8 +1,10 @@
 import { useContext, useEffect, useRef, useState } from "react";
+
 import axios from "axios";
 import Avatar from "./Avatar";
 import Logo from "./Logo";
 import ChatSymbol from "./ChatSymbol";
+
 import { UserContext } from "./UserContext.jsx";
 import { uniqBy } from "lodash";
 
@@ -17,6 +19,7 @@ export default function Chat() {
 
   const divUnderMessages = useRef();
 
+  // WEBSOCKET
   useEffect(() => {
     const ws = new WebSocket("ws://localhost:3001");
     setWs(ws);
@@ -95,8 +98,7 @@ export default function Chat() {
               "border-b border-gray-100 flex items-center gap-2 cursor-pointer " +
               (userId === selectedUserId ? "bg-blue-50" : "")
             }
-            key={userId}
-          >
+            key={userId}>
             {userId === selectedUserId && (
               <div className="w-1 bg-blue-500 h-12 rounded-r-md"></div>
             )}
@@ -122,16 +124,14 @@ export default function Chat() {
                   <div
                     className={
                       message.sender === id ? " text-right " : "text-left"
-                    }
-                  >
+                    }>
                     <div
                       className={
                         "text-left inline-block py-2 px-4 my-2 rounded-xl " +
                         (message.sender === id
                           ? "bg-blue-500 text-white"
                           : "bg-white text-gray-500")
-                      }
-                    >
+                      }>
                       {message.text}
                     </div>
                   </div>
@@ -152,8 +152,7 @@ export default function Chat() {
             />
             <button
               type="submit"
-              className="bg-blue-500 p-2 text-white rounded-sm"
-            >
+              className="bg-blue-500 p-2 text-white rounded-sm">
               <ChatSymbol />
             </button>
           </form>
