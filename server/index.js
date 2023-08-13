@@ -25,6 +25,7 @@ app.use(cookieParser());
 
 const getUserDataFromRequest = (req) => {};
 
+// GET PROFILE
 app.get("/api/profile", (req, res) => {
   const token = req.cookies?.token;
   if (token) {
@@ -37,10 +38,12 @@ app.get("/api/profile", (req, res) => {
   }
 });
 
+// GET USERID
 app.get("/messages/:userId", (req, res) => {
   const { userId } = req.params;
 });
 
+// POST LOGIN
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
   const foundUser = await User.findOne({ username });
@@ -61,6 +64,7 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
+// POST REGISTER
 app.post("/api/register", async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -88,7 +92,7 @@ app.post("/api/register", async (req, res) => {
 
 const server = app.listen(PORT);
 
-// websocket server
+// WEBSOCKET SERVER
 const wss = new WebSocketServer({ server });
 
 wss.on("connection", (connection, req) => {
