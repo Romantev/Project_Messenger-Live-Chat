@@ -1,4 +1,4 @@
-export default function Avatar({ userId, username }) {
+export default function Avatar({ userId, username, online }) {
   const colors = [
     "bg-red-200",
     "bg-green-200",
@@ -15,11 +15,15 @@ export default function Avatar({ userId, username }) {
   return (
     <div
       className={
-        "w-8 h-8 bg-red-200 rounded-full flex items-center justify-center" +
+        "w-8 h-8 relative  bg-red-200 rounded-full flex items-center justify-center" +
         color
-      }
-    >
+      }>
       <div className="w-full text-center opacity-70">{username[0]}</div>
+      {online ? (
+        <div className="absolute w-3 h-3 bg-green-400 -bottom-0.5 right-0 rounded-full border border-white shadow"></div>
+      ) : (
+        <div className="absolute w-3 h-3 bg-gray-400 -bottom-0.5 right-0 rounded-full border border-white shadow"></div>
+      )}
     </div>
   );
 }
