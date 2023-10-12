@@ -136,6 +136,10 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
+const server = app.listen(PORT, () => {
+  console.log("Server is running on Port " + PORT);
+});
+
 // WEBSOCKET SERVER
 const wss = new WebSocketServer({ server });
 
@@ -204,8 +208,4 @@ wss.on("connection", (connection, req) => {
 
 app.get("*", (req, res) => {
   res.sendFile(FE_INDEX);
-});
-
-const server = app.listen(PORT, () => {
-  console.log("Server is running on Port " + PORT);
 });
