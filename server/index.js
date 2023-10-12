@@ -19,6 +19,7 @@ const bcryptSalt = bcrypt.genSaltSync(10);
 const PORT = 3001;
 
 const FE_DIR = new URL("../client/dist", import.meta.url).pathname;
+const FE_INDEX = new URL("../client/dist/index.html", import.meta.url).pathname;
 
 const app = express();
 app.use(express.json());
@@ -135,10 +136,6 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-const server = app.listen(PORT, () => {
-  console.log("Server is running on Port " + PORT);
-});
-
 // WEBSOCKET SERVER
 const wss = new WebSocketServer({ server });
 
@@ -203,4 +200,12 @@ wss.on("connection", (connection, req) => {
   });
 
   notifyAboutOnlinePeople();
+});
+
+app.get("*", (req, res) => {
+  res.sendFile(FE_INDEX);
+});
+
+const server = app.listen(PORT, () => {
+  console.log("Server is running on Port " + PORT);
 });
