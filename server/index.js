@@ -7,8 +7,6 @@ import bcrypt from "bcryptjs";
 import { WebSocketServer } from "ws";
 import { User } from "./models/User.js";
 import { Message } from "./models/Message.js";
-import fs from "fs";
-import path from "path";
 
 dotenv.config();
 
@@ -18,13 +16,9 @@ const jwtSecret = process.env.JWT_SECRET;
 
 const bcryptSalt = bcrypt.genSaltSync(10);
 
-const PORT = 3000;
+const PORT = 3001;
 
 const app = express();
-
-const __filename = new URL(import.meta.url).pathname;
-const __dirname = path.dirname(__filename);
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -138,7 +132,9 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-const server = app.listen(PORT);
+const server = app.listen(PORT, () => {
+  console.log("Server is running on Port " + PORT);
+});
 
 // WEBSOCKET SERVER
 const wss = new WebSocketServer({ server });
@@ -181,42 +177,27 @@ wss.on("connection", (connection, req) => {
 
   connection.on("message", async (message) => {
     const messageData = JSON.parse(message.toString());
-    const { recipient, text, file } = messageData;
-    if (file) {
-      const parts = file.name.split(".");
-      const ext = parts[parts.length - 1];
-      const filename = Date.now() + "." + ext;
-      const path = new URL("./uploads/" + filename, import.meta.url);
-      const bufferData = new Buffer(file.data, "base64");
-      fs.writeFile(path, bufferData, () => {
-        console.log("file saved");
-      });
-    }
-    if (recipient && text) {
-      const messageDoc = await Message.create({
-        sender: connection.userId,
-        recipient,
-        text,
-      });
+    const { recipient, text } = messageData;
 
-      [...wss.clients]
-        .filter((c) => c.userId === recipient)
-        .forEach((c) =>
-          c.send(
-            JSON.stringify({
-              text,
-              sender: connection.userId,
-              recipient,
-              _id: messageDoc._id,
-            })
-          )
-        );
-    }
+    const messageDoc = await Message.create({
+      sender: connection.userId,
+      recipient,
+      text,
+    });
+
+    [...wss.clients]
+      .filter((c) => c.userId === recipient)
+      .forEach((c) =>
+        c.send(
+          JSON.stringify({
+            text,
+            sender: connection.userId,
+            recipient,
+            _id: messageDoc._id,
+          })
+        )
+      );
   });
 
   notifyAboutOnlinePeople();
-});
-
-app.listen(PORT, () => {
-  console.log("Server is running on Port " + PORT);
 });
