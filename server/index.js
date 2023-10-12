@@ -18,9 +18,12 @@ const bcryptSalt = bcrypt.genSaltSync(10);
 
 const PORT = 3001;
 
+const FE_DIR = new URL("../client/dist", import.meta.url).pathname;
+
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+app.use(express.static(FE_DIR));
 
 const getUserDataFromRequest = async (req) => {
   return new Promise((resolve, reject) => {
